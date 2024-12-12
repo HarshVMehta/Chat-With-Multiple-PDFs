@@ -79,38 +79,13 @@ def user_input(user_question):
 def main():
     st.set_page_config("Chat with Multiple PDF")
     st.header("Chat with Multiple PDFs using Gemini 😱")
-    
-    # JavaScript to detect mobile devices
-    mobile_detect_js = """
-    <script>
-    function detectMobile() {
-        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    }
-    if (detectMobile()) {
-        document.body.classList.add('mobile-device');
-    }
-    </script>
-    """
-    st.components.v1.html(mobile_detect_js, height=0)
-    
-    # CSS to show/hide elements based on device type
-    st.markdown("""
-    <style>
-    .mobile-message { display: none; }
-    .mobile-device .mobile-message { display: block; }
-    </style>
-    """, unsafe_allow_html=True)
-    
-    # Mobile message (hidden by default, shown on mobile devices)
-    st.markdown("""
-    <div class="mobile-message">
-    <div class="stAlert">
-    <div class="stAlert-info">
-    📱 Welcome mobile user! To upload PDFs and process them, please click the '>' icon in the top-left corner to open the sidebar.
-    </div>
-    </div>
-    </div>
-    """, unsafe_allow_html=True)
+
+    # Detect mobile devices using Streamlit's built-in functionality
+    is_mobile = st.experimental_get_query_params().get("mobile", ["false"])[0].lower() == "true"
+
+    # Display message for mobile users
+    if is_mobile:
+        st.info("📱 Welcome mobile user! To upload PDFs and process them, please click the '>' icon in the top-left corner to open the sidebar.", icon="ℹ️")
     
     user_question = st.text_input("Ask a Question from the PDF Files")
     
@@ -142,6 +117,10 @@ def main():
                         st.error(f"An error occurred while processing your PDFs: {str(e)}")
             else:
                 st.warning("Please upload at least one PDF.")
+
+    # Add instructions for desktop users
+    if not is_mobile:
+        st.sidebar.info("💻 Welcome! Upload your PDFs and process them using the sidebar controls above.")
 
 if __name__ == "__main__":
     main()
