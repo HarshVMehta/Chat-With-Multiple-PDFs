@@ -77,15 +77,10 @@ def user_input(user_question):
 
 # Main function
 def main():
-    st.set_page_config("Chat with Multiple PDF")
-    st.header("Chat with Multiple PDFs using Gemini 😱")
-
-    # Detect mobile devices using Streamlit's built-in functionality
-    is_mobile = st.experimental_get_query_params().get("mobile", ["false"])[0].lower() == "true"
-
-    # Display message for mobile users
-    if is_mobile:
-        st.info("📱 Welcome mobile user! To upload PDFs and process them, please click the '>' icon in the top-left corner to open the sidebar.", icon="ℹ️")
+    st.set_page_config("Chat with Multiple PDFs",
+                       page_icon="🤖"
+                       )
+    st.header("Chat with Multiple PDFs 😱📄")
     
     user_question = st.text_input("Ask a Question from the PDF Files")
     
@@ -117,10 +112,8 @@ def main():
                         st.error(f"An error occurred while processing your PDFs: {str(e)}")
             else:
                 st.warning("Please upload at least one PDF.")
-
-    # Add instructions for desktop users
-    if not is_mobile:
-        st.sidebar.info("💻 Welcome! Upload your PDFs and process them using the sidebar controls above.")
+        st.write("")
+        st.write("Crafted with ❤️ designed by Harsh Mehta")        
 
 if __name__ == "__main__":
     main()
