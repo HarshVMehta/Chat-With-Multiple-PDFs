@@ -113,7 +113,7 @@ def main():
             else:
                 st.warning("Please upload at least one PDF.")
         st.write("")
-        st.write("Crafted with ❤️ and designed by Harsh Mehta")        
+        st.write("Crafted with ❤️, designed by Harsh Mehta")        
 
 if __name__ == "__main__":
     main()
