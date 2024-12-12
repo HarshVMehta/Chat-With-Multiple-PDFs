@@ -18,6 +18,10 @@ load_dotenv()
 # Configure Google API
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
+# Function to detect mobile devices
+def is_mobile():
+    return st.session_state.get('is_mobile', False)
+
 # Function to extract text from PDF files
 def get_pdf_text(pdf_docs):
     text = ""
@@ -79,6 +83,14 @@ def user_input(user_question):
 def main():
     st.set_page_config("Chat with Multiple PDF")
     st.header("Chat with Multiple PDFs using Gemini 😱")
+    
+    # Detect mobile devices
+    if 'is_mobile' not in st.session_state:
+        st.session_state.is_mobile = st.experimental_get_query_params().get('mobile', [False])[0] == 'true'
+
+    # Show message for mobile users
+    if is_mobile():
+        st.info("📱 Welcome mobile user! To upload PDFs and process them, please click the '>' icon in the top-left corner to open the sidebar.", icon="ℹ️")
     
     user_question = st.text_input("Ask a Question from the PDF Files")
     
