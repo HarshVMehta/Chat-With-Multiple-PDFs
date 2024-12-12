@@ -18,10 +18,6 @@ load_dotenv()
 # Configure Google API
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
-# Function to detect mobile devices
-def is_mobile():
-    return st.session_state.get('is_mobile', False)
-
 # Function to extract text from PDF files
 def get_pdf_text(pdf_docs):
     text = ""
@@ -87,29 +83,34 @@ def main():
     # JavaScript to detect mobile devices
     mobile_detect_js = """
     <script>
-    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-        localStorage.setItem('is_mobile', 'true');
-    } else {
-        localStorage.setItem('is_mobile', 'false');
+    function detectMobile() {
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    }
+    if (detectMobile()) {
+        document.body.classList.add('mobile-device');
     }
     </script>
     """
-    st.components.v1.html(mobile_detect_js)
+    st.components.v1.html(mobile_detect_js, height=0)
     
-    # Retrieve the mobile status from local storage
-    is_mobile_js = """
-    <script>
-    var isMobile = localStorage.getItem('is_mobile') === 'true';
-    if (isMobile) {
-        window.parent.postMessage({type: 'streamlit:setComponentValue', value: true}, '*');
-    }
-    </script>
-    """
-    mobile_detector = st.empty()
-    mobile_detector.components.v1.html(is_mobile_js, height=0)
+    # CSS to show/hide elements based on device type
+    st.markdown("""
+    <style>
+    .mobile-message { display: none; }
+    .mobile-device .mobile-message { display: block; }
+    </style>
+    """, unsafe_allow_html=True)
     
-    if mobile_detector.checkbox("Is Mobile?", value=False, key="is_mobile"):
-        st.info("📱 Welcome mobile user! To upload PDFs and process them, please click the '>' icon in the top-left corner to open the sidebar.", icon="ℹ️")
+    # Mobile message (hidden by default, shown on mobile devices)
+    st.markdown("""
+    <div class="mobile-message">
+    <div class="stAlert">
+    <div class="stAlert-info">
+    📱 Welcome mobile user! To upload PDFs and process them, please click the '>' icon in the top-left corner to open the sidebar.
+    </div>
+    </div>
+    </div>
+    """, unsafe_allow_html=True)
     
     user_question = st.text_input("Ask a Question from the PDF Files")
     
