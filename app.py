@@ -84,12 +84,31 @@ def main():
     st.set_page_config("Chat with Multiple PDF")
     st.header("Chat with Multiple PDFs using Gemini 😱")
     
-    # Detect mobile devices
-    if 'is_mobile' not in st.session_state:
-        st.session_state.is_mobile = st.query_params.get('mobile', 'false') == 'true'
-
-    # Show message for mobile users
-    if is_mobile():
+    # JavaScript to detect mobile devices
+    mobile_detect_js = """
+    <script>
+    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+        localStorage.setItem('is_mobile', 'true');
+    } else {
+        localStorage.setItem('is_mobile', 'false');
+    }
+    </script>
+    """
+    st.components.v1.html(mobile_detect_js)
+    
+    # Retrieve the mobile status from local storage
+    is_mobile_js = """
+    <script>
+    var isMobile = localStorage.getItem('is_mobile') === 'true';
+    if (isMobile) {
+        window.parent.postMessage({type: 'streamlit:setComponentValue', value: true}, '*');
+    }
+    </script>
+    """
+    mobile_detector = st.empty()
+    mobile_detector.components.v1.html(is_mobile_js, height=0)
+    
+    if mobile_detector.checkbox("Is Mobile?", value=False, key="is_mobile"):
         st.info("📱 Welcome mobile user! To upload PDFs and process them, please click the '>' icon in the top-left corner to open the sidebar.", icon="ℹ️")
     
     user_question = st.text_input("Ask a Question from the PDF Files")
