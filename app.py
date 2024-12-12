@@ -86,7 +86,7 @@ def main():
     
     # Detect mobile devices
     if 'is_mobile' not in st.session_state:
-        st.session_state.is_mobile = st.experimental_get_query_params().get('mobile', [False])[0] == 'true'
+        st.session_state.is_mobile = st.query_params.get('mobile', 'false') == 'true'
 
     # Show message for mobile users
     if is_mobile():
